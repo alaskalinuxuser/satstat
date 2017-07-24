@@ -42,6 +42,8 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -84,6 +86,10 @@ import static android.telephony.PhoneStateListener.LISTEN_CELL_LOCATION;
 import static android.telephony.PhoneStateListener.LISTEN_DATA_CONNECTION_STATE;
 import static android.telephony.PhoneStateListener.LISTEN_NONE;
 import static android.telephony.PhoneStateListener.LISTEN_SIGNAL_STRENGTHS;
+import static com.vonglasow.michael.satstat.ui.GpsSectionFragment.gpsCoord;
+import static com.vonglasow.michael.satstat.ui.GpsSectionFragment.gpsLat;
+import static com.vonglasow.michael.satstat.ui.GpsSectionFragment.gpsLon;
+
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -148,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements GpsStatus.Listene
 	WifiManager wifiManager;
 	LocationManager locationManager;
 	SensorManager sensorManager;
+
+	ClipboardManager clipboard; // Add ability to copy location to the clipboard.
 	
 	boolean[] permsRequested = new boolean[Const.PERM_REQUEST_MAX + 1];
 
@@ -199,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements GpsStatus.Listene
 	boolean prefCid2 = false;
 	int prefWifiSort = 0;
 	boolean prefMapOffline = false;
+	String clipLocation;
 	String prefMapPath = Const.MAP_PATH_DEFAULT;
 
 	/** 
@@ -306,6 +315,8 @@ public class MainActivity extends AppCompatActivity implements GpsStatus.Listene
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+		clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         
         defaultUEH = Thread.getDefaultUncaughtExceptionHandler();
         
@@ -497,6 +508,22 @@ public class MainActivity extends AppCompatActivity implements GpsStatus.Listene
 			return true;
 		} else if (itemId == R.id.action_legend) {
 			startActivity(new Intent(this, LegendActivity.class));
+			return true;
+		} else if (itemId == R.id.action_copy_location) {
+			/* 
+			 * Copy the currently displayed location to the clipboard.
+			 * Use visible location textviews as this is set by the user
+			 * for decimal, minute, second, mgrs.
+			 */
+			if (prefCoord == Const.KEY_PREF_COORD_MGRS) {
+				clipLocation = gpsCoord.getText().toString();
+			} else {
+				clipLocation = gpsLat.getText().toString() + " " + gpsLon.getText().toString();
+			}
+			ClipData clip = ClipData.newPlainText("Location ", clipLocation);
+			clipboard.setPrimaryClip(clip);
+			Toast.makeText(getApplicationContext(), clipLocation +
+					" copied to the clipboard.", Toast.LENGTH_SHORT).show();
 			return true;
 		} else if (itemId == R.id.action_about) {
 			startActivity(new Intent(this, AboutActivity.class));
@@ -926,3 +953,4 @@ public class MainActivity extends AppCompatActivity implements GpsStatus.Listene
         }
     }
 }
+

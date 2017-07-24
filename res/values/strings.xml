@@ -7,6 +7,7 @@
     <string name="action_stop_record">Stop recording</string>
     <string name="action_agps">Reload AGPS data</string>
     <string name="action_legend">Legend</string>
+    <string name="action_copy_location">Copy Location</string>
     <string name="action_about">About</string>
     <string name="dot" translatable="false">&#x25a0;</string>
     <string name="smallDot" translatable="false">&#x25fc;</string>

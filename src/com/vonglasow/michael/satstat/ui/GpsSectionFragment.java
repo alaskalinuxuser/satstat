@@ -67,11 +67,11 @@ public class GpsSectionFragment extends Fragment {
 	private GpsStatusView gpsStatusView;
 	private GpsSnrView gpsSnrView;
 	private LinearLayout gpsLatLayout;
-	private TextView gpsLat;
+	static TextView gpsLat; // Static for copy to clipboard
 	private LinearLayout gpsLonLayout;
-	private TextView gpsLon;
+	static TextView gpsLon; // Static for copy to clipboard
 	private LinearLayout gpsCoordLayout;
-	private TextView gpsCoord;
+	static TextView gpsCoord; // Static for copy to clipboard
 	private TextView orDeclination;
 	private TextView gpsSpeed;
 	private TextView gpsSpeedUnit;
